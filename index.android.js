@@ -24,6 +24,7 @@ var MOCKED_MOVIES_DATA = [
   },
 ];
 //USE GOOGLE TO CONVERT XML TO JSON
+//MAKE NEW BRANHC FOR ANIMATION
 var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 
 var AwesomeProject = React.createClass({
