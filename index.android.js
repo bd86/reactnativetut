@@ -5,6 +5,7 @@
 'use strict';
 
 var React = require('react-native');
+//Check this
 var {
   AppRegistry,
   Animated,
