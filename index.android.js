@@ -26,6 +26,7 @@ var MOCKED_MOVIES_DATA = [
 //USE GOOGLE TO CONVERT XML TO JSON
 //MAKE NEW BRANCH FOR ANIMATION
 var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
+var RSS_FEED = 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http%3A%2F%2Fwww.charismanews.com%2Findex.php%3Foption%3Dcom_ninjarsssyndicator%26feed_id%3D1%26format%3Draw';
 
 var AwesomeProject = React.createClass({
   getInitialState: function() {
@@ -40,11 +41,13 @@ var AwesomeProject = React.createClass({
     this.fetchData();
   },
   fetchData: function() {
-    fetch(REQUEST_URL)
+    fetch(RSS_FEED)
       .then((response) => response.json())
       .then((responseData) => {
+        //console.log(responseData.responseData.feed.entries);
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+          //dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+          dataSource: this.state.dataSource.cloneWithRows(responseData.responseData.feed.entries),
           loaded: true,
         });
       })
@@ -74,13 +77,13 @@ var AwesomeProject = React.createClass({
   renderMovie: function(movie) {
     return (
       <View style={styles.container}>
-        <Image 
-          source={{uri: movie.posters.thumbnail}} 
+        <Image
+          source={{uri: movie.mediaGroups[0].contents[0].url}}
           style={styles.thumbnail}
         />
         <View style={styles.rightContainer}>
           <Text style={styles.title}>{movie.title}</Text>
-          <Text style={styles.year}>{movie.year}</Text>
+          <Text style={styles.year}>{movie.contentSnippet}</Text>
         </View>
       </View>
     );
