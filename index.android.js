@@ -1,65 +1,101 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 var React = require('react-native');
 //Check this
 var {
   AppRegistry,
-  Animated,
-  Image,
   StyleSheet,
-  Text,
   View,
+  Animated,
+  PanResponder
 } = React;
 
-var AwesomeProject = React.createClass({
-  
-   getInitialState: function() {
+var SQUARE_DIMENSIONS = 100;
+
+var AnimatedFlick = React.createClass({
+  getInitialState: function() {
     return {
-      bounceValue: new Animated.Value(0),
+      pan: new Animated.ValueXY()
     };
   },
+  componentWillMount: function() {
+    this._animatedValueX = 0;
+    this._animatedValueY = 0;
+    this.state.pan.x.addListener((Value) => this._animatedValueX = Value.value);
+    this.state.pan.y.addListener((Value) => this._animatedValueY = Value.value);
 
-  componentDidMount: function() {
-    this.state.bounceValue.setValue(1.5);
-    Animated.spring(
-      this.state.bounceValue,
-      {
-        toValue: 0.8,
-        friction: 1,
+    this._panResponder = PanResponder.create({
+      onMoveShouldSetResponderCapture: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
+      onPanResponderGrant: (e, gestureState) => {
+        this.state.pan.setOffset({x: this._animatedValueX, y: this._animatedValueY});
+        this.state.pan.setValue({x: 0, y: 0});
+      },
+      onPanResponderMove: Animated.event([
+        null, {dx: this.state.pan.x, dy: this.state.pan.y}
+      ]),
+      onPanResponderRelease: () => {
+        Animated.spring(this.state.pan, {
+          toValue: 0
+        }).start();
       }
-    ).start();
+    });
   },
-
+  componentWillUnmount : function() {
+    this.state.pan.x.removeAllListeners();
+    this.state.pan.y.removeAllListeners();
+  },
+  getStyle: function() {
+    return [
+      Styles.square,
+      {
+        transform: [
+          {
+            translateX: this.state.pan.x
+          },
+          {
+            translateY: this.state.pan.y
+          },
+          {
+            rotate: this.state.pan.x.interpolate({
+              inputRange: [-200, 0, 200], 
+              outputRange: ["-30deg", "0deg", "30deg"]
+            })
+          }
+        ]
+      },
+      {
+        opacity: this.state.pan.x.interpolate({
+          inputRange: [-200, 0, 200], 
+          outputRange: [0.5, 1, 0.5]
+        })
+      }
+    ];
+  },
   render: function() {
     return (
-      <View>
-        <Animated.Image                         
-          source={{uri: 'http://i.imgur.com/XMKOH81.jpg'}}
-          style={{
-            flex: 1,
-            transform: [                        
-              {scale: this.state.bounceValue},  
-            ]
-          }}
+      <View style={Styles.container}>
+        <Animated.View
+          style={this.getStyle()}
+          {...this._panResponder.panHandlers} 
         />
-        
       </View>
     );
   }
 });
 
-var styles = StyleSheet.create({
+var Styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    justifyContent: 'center'
   },
-  
+  square: {
+    borderRadius: SQUARE_DIMENSIONS/2,
+    width: SQUARE_DIMENSIONS,
+    height: SQUARE_DIMENSIONS,
+    backgroundColor: '#FF8300'
+  }
 });
 
-AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
+AppRegistry.registerComponent('AwesomeProject', () => AnimatedFlick);
