@@ -23,8 +23,7 @@ var MOCKED_MOVIES_DATA = [
     }
   },
 ];
-//USE GOOGLE TO CONVERT XML TO JSON
-//MAKE NEW BRANCH FOR ANIMATION
+
 var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 var RSS_FEED = 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http%3A%2F%2Fwww.charismanews.com%2Findex.php%3Foption%3Dcom_ninjarsssyndicator%26feed_id%3D1%26format%3Draw';
 
